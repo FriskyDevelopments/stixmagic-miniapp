@@ -6,7 +6,9 @@ FROM node:22-bookworm-slim AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+# NOTE: repo lockfile drifts from package.json, so `npm ci` (strict) fails;
+# use a tolerant install until the lockfile is regenerated.
+RUN npm install --no-audit --no-fund
 
 COPY . .
 ENV NITRO_PRESET=node-server
